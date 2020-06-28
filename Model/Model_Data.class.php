@@ -5,14 +5,16 @@ class Model_Data{
     private $PASSWORD;
     private $DATABASE;
     private $__TABLENAME__;
+    private $__NAME_ID_ATTRIBUTE__;
     private $SERVER_URI;
     protected $MYSQLI;
 
-    function __construct($__tablename__) {
+    function __construct($__tablename__ = '', $__name_id_attribute__ = 'ID') {
         $this->USERNAME = "root";
         $this->PASSWORD = getenv('MYSQL_PASSWORD');
         $this->DATABASE = "f_ebenezer";
         $this->__TABLENAME__ = $__tablename__;
+        $this->__NAME_ID_ATTRIBUTE__ = $__name_id_attribute__;
         $this->SERVER_URI = "localhost";
     }
 
@@ -25,7 +27,7 @@ class Model_Data{
     }
 
     private function clean_array($model) {
-        $base = new Model_Data('');
+        $base = new Model_Data();
         return array_diff_key(get_object_vars($model), get_object_vars($base));
     }
 
@@ -44,8 +46,10 @@ class Model_Data{
     }
 
     function save($model){
-        $array = $this->clean_array($model);
-        $check = "SELECT * FROM ".$this->__TABLENAME__."  WHERE ID='".$array['ID']."'";
+        $array = $this->clean_array($model); // Se eliminan los atributos heredados de Model_Data
+        $_id = $this->__NAME_ID_ATTRIBUTE__; // Se establece el nombre del atributo que contiene el ID dentro de la tabla
+        $_value = (is_string($array[$_id])) ? "'".$array[$_id]."'" : $array[$_id]; // Si el valor del atributto es un string se la añaden las comillas simples
+        $check = "SELECT * FROM ".$this->__TABLENAME__."  WHERE $_id=".$_value; // Se verifica si ya existe un registro con ese ID dentro de la tabla
         $query = '';
         $_array = array();
 
@@ -55,24 +59,25 @@ class Model_Data{
             exit;
         }
 
-        if($resultado->num_rows == 0){
+        if($resultado->num_rows == 0){ // Si no existen registros con ese ID se procede a crearlo
             foreach ($array as $key => $value) {
                 $_value = (is_string($value)) ? "'$value'" : $value;
                 $_array[$key] = $_value;
             }
 
             $query = "INSERT INTO ".$this->__TABLENAME__." VALUES(".implode(', ', $_array).")";
-        }else{
+        }else{ // Si ya existe un registro con ese ID se procede a actualizarlo
             foreach ($array as $key => $value) {
+                if(strcmp($key, $this->__NAME_ID_ATTRIBUTE__) == 0) continue;
                 $_value = (is_string($value)) ? "'$value'" : $value;
                 array_push($_array, $key." = ".$_value);
             }
 
-            $_value = (is_string($array['ID'])) ? "'".$array['ID']."'" : $array['ID'];
-            $query = "UPDATE ".$this->__TABLENAME__." SET ".implode(', ', $_array)." WHERE ID = ".$_value;
+            $_value = (is_string($array[$_id])) ? "'".$array[$_id]."'" : $array[$_id];
+            $query = "UPDATE ".$this->__TABLENAME__." SET ".implode(', ', $_array)." WHERE $_id = ".$_value;
         }
 
-        $resultado->free();
+        $resultado->free(); return $query;
         if(!$resultado = $this->MYSQLI->query($query)){
             $this->logger($query, $this->MYSQLI->error);
             exit;

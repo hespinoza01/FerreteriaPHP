@@ -12,9 +12,9 @@ class Usuario extends Model_Data {
     public $FechaModificacion;
 
     function __construct() {
-        parent::__construct('usuario');
+        parent::__construct('usuario', 'ID');
 
-        $this->ID = 'default@default';
+        $this->ID = 'default@default.com';
         $this->Contrasenia = 'default contrasenia';
         $this->Nombre = 'default nombre';
         $this->Apellido = 'default apellido';
