@@ -27,7 +27,7 @@
                 session_start();
                 $_SESSION['user'] = base64_encode($username.$password);
                 $_SESSION['last_access'] = time();
-                header("Location: index.php");
+                header("Location: /index.php");
                 die();
             }
         }

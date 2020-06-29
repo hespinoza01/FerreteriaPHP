@@ -1,0 +1,12 @@
+.padre {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Baloo Da 2', cursive;
+}
+
+p {
+    font-size: 20px;
+    font-style: oblique;
+}

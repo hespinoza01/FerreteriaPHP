@@ -23,6 +23,19 @@
         <?php load_template('templates/menubar.html.php'); ?>
         <?php load_template('templates/mainmenu.html.php'); ?>
 
-        <main class="main-container"></main>
+        <main class="main-container">
+            <?php
+                $template_tab = [
+                    'inicio' => 'templates/inicio.html.php',
+                    'proveedores' => 'templates/proveedores.html.php',
+                    'productos' => 'templates/productos.html.php',
+                    'reportes' => 'templates/reportes.html.php',
+                    'usuarios' => 'templates/usuarios.html.php'
+                ];
+
+                if(isset($_GET['tab'])) load_template($template_tab[$_GET['tab']]);
+                else load_template($template_tab['inicio']);
+            ?>
+        </main>
     </body>
 </html>
