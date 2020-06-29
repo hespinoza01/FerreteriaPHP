@@ -21,11 +21,12 @@ class Usuario extends Model_Data {
         $this->Estado = 1;
         $this->FechaCreacion = date('Y-m-d G:i:s');
         $this->FechaModificacion = date('Y-m-d G:i:s');
+
+        return $this;
     }
 
     function save(){
-        $vars = get_class($this);
-        return parent::save($this);
+        return parent::_save($this);
     }
 }
 
