@@ -1,6 +1,9 @@
 <?php 
     require_once 'php/load_template.php';
     include 'php/check_access.php';
+
+    session_start();
+    $_SESSION['last_access'] = time();
 ?>
 
 <!DOCTYPE html>
